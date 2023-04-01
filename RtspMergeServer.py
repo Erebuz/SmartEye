@@ -8,10 +8,11 @@ from RtspServer import RtspServer
 
 
 class RtspMergeServer(RtspServer):
-    def __init__(self, source=0, fps=30, port=8554, uri="video_stream", show_stat=False):
+    def __init__(self, app, source=0, fps=30, port=8554, uri="video", show_stat=False):
         self.model = NeuralNetwork()
 
-        super().__init__(source=source,
+        super().__init__(app,
+                         source=source,
                          fps=fps,
                          port=port,
                          uri=uri,

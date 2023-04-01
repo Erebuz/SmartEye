@@ -1,3 +1,4 @@
+import asyncio
 import os
 import time
 from threading import Thread
@@ -103,11 +104,21 @@ class GstServer(GstRtspServer.RTSPServer):
 
 
 class RtspServer:
-    def __init__(self, source=0, fps=30, port=8554, uri="video_stream", show_stat=False):
+    def __init__(self, app, source=0, fps=30, port=8554, uri="video_stream", show_stat=False):
         Gst.init(None)
 
         self.server = GstServer(source, fps, port, uri, self.frame_update, show_stat)
 
+        self.loop = app.loop
+        # loop = GLib.MainLoop()
+        # loop.run()
+
+    async def init(self):
+        loop = GLib.MainLoop()
+        loop.run()
+
+    def start(self):
+        # self.loop.create_task(self.init())
         loop = GLib.MainLoop()
         loop.run()
 
@@ -120,7 +131,7 @@ if __name__ == '__main__':
     parser.add_argument("--source", default=0, help="device id for the video device or video file location")
     parser.add_argument("--fps", default=30, help="fps of the camera", type=int)
     parser.add_argument("--port", default=8554, help="port to stream video", type=int)
-    parser.add_argument("--stream_uri", default="video_stream", help="rtsp video stream uri")
+    parser.add_argument("--stream_uri", default="video", help="rtsp video stream uri")
     parser.add_argument("--stat", default=False, help="Show stream statistics")
     opt = parser.parse_args()
 

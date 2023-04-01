@@ -55,7 +55,7 @@ class RTSPVideoWriterObject(object):
 
 
 if __name__ == '__main__':
-    rtsp_stream_link = "rtsp://127.0.0.1:8555/video_stream"
+    rtsp_stream_link = "rtsp://127.0.0.1:8554/video"
     # rtsp_stream_link = 0
     video_stream_widget = RTSPVideoWriterObject(rtsp_stream_link)
 

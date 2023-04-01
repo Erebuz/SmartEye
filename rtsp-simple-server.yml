@@ -71,7 +71,7 @@ protocols: [udp, multicast, tcp]
 # Available values are "no", "strict", "optional".
 encryption: "no"
 # Address of the TCP/RTSP listener. This is needed only when encryption is "no" or "optional".
-rtspAddress: :8554
+rtspAddress: :8555
 # Address of the TCP/TLS/RTSPS listener. This is needed only when encryption is "strict" or "optional".
 rtspsAddress: :8322
 # Address of the UDP/RTP listener. This is needed only when "udp" is in protocols.
@@ -307,6 +307,6 @@ paths:
 #    runOnRead:
 #    # Restart the command if it exits suddenly.
 #    runOnReadRestart: no
-  video_stream:
-    source: rtsp://19.19.1.17:8555/video_stream
+  video:
+    source: rtsp://19.19.1.17:8554/video
     sourceProtocol: automatic

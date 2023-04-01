@@ -1,26 +1,46 @@
+import asyncio
+
 from sanic import Sanic
+
+from web.routes import setup_routes
+from web.plugins import middlewares
 from sanic_cors import CORS
 
-from web.plugins import jwtPlugin
-from web.plugins.middlewares import setup_middlewares
-from web.routes import setup_routes
-from web.settings import Settings
+from gi.repository import Gst, GstRtspServer, GLib
 
 
 class WebServer:
-    def __init__(self):
-        sanic = Sanic("Auto-Charger")
-        sanic.config.update(Settings)
+    def __init__(self, app, run_test=False):
+        super().__init__()
+        self.sanic = Sanic(name='SmartEye')
 
-        jwtPlugin.setup_jwt(sanic)
-        CORS(sanic)
+        self.loop = app.loop
+        self.__app = app
 
-        setup_routes(sanic)
-        setup_middlewares(sanic)
+        CORS(self.sanic,
+             resources={r"/api/*": {"origins": "*"}, r"/auth/*": {"origins": "*"}},
+             automatic_options=True
+             )
 
-        sanic.run(
-            host=sanic.config.HOST,
-            port=sanic.config.PORT,
-            debug=sanic.config.DEBUG,
-            auto_reload=sanic.config.DEBUG,
+        self.sanic.update_config({
+            "ACCESS_LOG": True,
+            "FALLBACK_ERROR_FORMAT": "json",
+            "KEEP_ALIVE": True,
+            "KEEP_ALIVE_TIMEOUT": 600})
+
+        middlewares.setup_middlewares(self.sanic)
+
+        setup_routes(self, app)
+
+    def start(self):
+        self._init_web_server()
+
+    def _init_web_server(self):
+        self.server = self.sanic.create_server(
+            host='0.0.0.0',
+            port=9999,
+            return_asyncio_server=True,
+            debug=False
         )
+
+        self.loop.create_task(self.server)
